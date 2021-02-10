@@ -1,7 +1,8 @@
 process plot_donor_ncells {
     tag "${sample_donor_summary_tsv}"
     
-    publishDir "${params.outdir}/plots/", mode: "${params.plot_donor_ncells.copy_mode}", overwrite: true
+    publishDir "${params.outdir}/plots/", mode: "${params.plot_donor_ncells.copy_mode}", overwrite: true,
+	saveAs: {filename -> filename.indexOf(".pdf") > 0 ? filename.replaceFirst("outputs/","") : "$filename"}
     
     when: 
     params.plot_donor_ncells.run

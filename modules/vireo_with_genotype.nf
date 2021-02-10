@@ -1,6 +1,7 @@
 process vireo_with_genotype {
-    tag "${samplename}"
-    publishDir "${params.outdir}/vireo_gt/${samplename}/", mode: "${params.vireo.copy_mode}", overwrite: true
+    tag "${samplename}.${donors_gt_vcf}"
+    publishDir "${params.outdir}/vireo_gt/${samplename}/", mode: "${params.vireo.copy_mode}", overwrite: true,
+	saveAs: {filename -> filename.replaceFirst("vireo_${samplename}/","") }
     
     when: 
     params.vireo.run_with_genotype_input

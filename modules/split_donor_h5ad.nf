@@ -1,7 +1,8 @@
 process split_donor_h5ad {
     tag "${sample}"
 
-    publishDir "${params.outdir}/split_donor_h5ad/${sample}/", mode: "${params.split_h5ad_per_donor.copy_mode}", overwrite: true
+    publishDir "${params.outdir}/split_donor_h5ad/${sample}/", mode: "${params.split_h5ad_per_donor.copy_mode}", overwrite: true,
+	saveAs: {filename -> filename.replaceFirst("outputs/","") }
     
     when: 
     params.split_h5ad_per_donor.run

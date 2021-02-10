@@ -72,11 +72,12 @@ def plot_donor_ncells(output_dir, sample_donor_summary_tsv, plotnine_dpi):
             x='donor',
             y='n_cells',
             fill='donor'
-        )) + plt9.facet_wrap('experiment_id', scales = 'free', ncol = 3)
-        gplt = gplt + plt9.theme_bw() + plt9.theme(figure_size=(25, 30), 
+        )) + plt9.facet_wrap('experiment_id', scales = 'free_x', ncol = 3)
+        gplt = gplt + plt9.theme_bw() + plt9.theme(strip_text=plt9.element_text(size = 10, colour="black"),
+                                                   subplots_adjust={'hspace': 0.2}, figure_size=(25, 30), 
                                                    legend_position='none', 
-                                                   axis_text_x=plt9.element_text(colour="black", angle=45),
-                                                   axis_text_y=plt9.element_text(colour="black"))
+                                                   axis_text_x=plt9.element_text(size = 10, colour="black", angle=45),
+                                                   axis_text_y=plt9.element_text(size = 10, colour="black"))
         gplt = gplt + plt9.geom_bar(stat='identity', position='dodge')
         gplt = gplt + plt9.geom_text(plt9.aes(label='n_cells'))
         gplt = gplt + plt9.labels.ggtitle('CellSNP/Vireo deconvolution\nnumber of cells per deconvoluted donor')
