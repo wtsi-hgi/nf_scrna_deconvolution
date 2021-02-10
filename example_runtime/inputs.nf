@@ -6,6 +6,7 @@ params {
     // TODO:  'from_cellranger_filt_directory' mode is not ready yet: see current progress at nextflow_ci/pipelines/prepare_inputs/from_cellranger_filt_directory.nf
     // TODO:  'from_h5' mode is not ready yet: see current progress at nextflow_ci/pipelines/prepare_inputs/from_h5.nf 
     cellsnp_input_table_mode = "from_barcodes"
+//    input_data_table = '/lustre/scratch123/pipelines/fetch_Submission_Data_Pilot_UKB/results/deconv.input.feedall.tsv'
     input_data_table = '/lustre/scratch123/pipelines/fetch_Submission_Data_Pilot_UKB/results/deconv.input.tsv'
     // input_data_table = '/lustre/scratch123/hgi/projects/ukbb_scrna/pipelines/fetch_Submission_Data_Pilot_UKB/results/deconv.input.tsv'
     input_tables_column_delimiter = '\t' // set 'tsv' or 'csv': whether input_data_table (and other input tables) have tab-separted ('tsv') or comma-separated columns ('csv').
@@ -65,6 +66,7 @@ params {
 
 	    // path to donor vcfs: 
 	    path_donor_vcfs_table = '/lustre/scratch123/pipelines/nf_ci_deconv_inputs/donors_stephen_watts/donors_input.tsv'
+	    // path_donor_vcfs_table = '/lustre/scratch123/pipelines/nf_ci_deconv_inputs/donors_stephen_watts/donors_input.tsv'
 	    // 'path_donor_vcfs_table' must have these 3 columns :
 	    //   - 'experiment_id': samplename for each convoluted input (to be deconvoluted into donors by the pipeline)
 	    //   - 'donors_vcf': for each 'experiment_id', path to VCF file that has the donors GT data for Vireo deconvolution.
