@@ -69,7 +69,7 @@ workflow  main_deconvolution {
 		     storeDir:params.outdir)
     split_donor_h5ad.out.h5ad_tsv
 	.collectFile(name: "cellranger_as_h5ad.tsv", 
-		     newLine: false, sort: true,
+		     newLine: true, sort: true, // only one line in each file to collate, without ending new line character, so add it here.
 		     seed: "experiment_id\th5ad_filepath\n",
 		     storeDir:params.outdir)
     
