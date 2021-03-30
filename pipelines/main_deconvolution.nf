@@ -55,6 +55,23 @@ workflow  main_deconvolution {
 
     // vireo() outputs -> split_donor_h5ad(): 
     split_donor_h5ad(vireo_out_sample_donor_ids.combine(ch_experiment_filth5, by: 0))
+
+    // collect file paths to h5ad files in tsv tables:
+    split_donor_h5ad.out.donors_h5ad_tsv
+	.collectFile(name: "donors_h5ad.tsv", 
+		     newLine: false, sort: true,
+		     seed: "experiment_id\tdonor\th5ad_filepath\n",
+		     storeDir:params.outdir)
+    split_donor_h5ad.out.donors_h5ad_assigned_tsv
+	.collectFile(name: "donors_h5ad_assigned.tsv", 
+		     newLine: false, sort: true,
+		     seed: "experiment_id\tdonor\th5ad_filepath\n",
+		     storeDir:params.outdir)
+    split_donor_h5ad.out.h5ad_tsv
+	.collectFile(name: "cellranger_as_h5ad.tsv", 
+		     newLine: false, sort: true,
+		     seed: "experiment_id\th5ad_filepath\n",
+		     storeDir:params.outdir)
     
     // all vireo() outputs collected -> plot_donor_ncells(): 
     vireo_out_sample_summary_tsv
