@@ -70,7 +70,7 @@ workflow  main_deconvolution {
     split_donor_h5ad.out.h5ad_tsv
 	.collectFile(name: "cellranger_as_h5ad.tsv", 
 		     newLine: true, sort: true, // only one line in each file to collate, without ending new line character, so add it here.
-		     seed: "experiment_id\th5ad_filepath\n",
+		     seed: "experiment_id\th5ad_filepath", // don't need \n here since newLine: true 
 		     storeDir:params.outdir)
     
     // all vireo() outputs collected -> plot_donor_ncells(): 
