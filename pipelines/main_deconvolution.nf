@@ -62,11 +62,27 @@ workflow  main_deconvolution {
 		     newLine: false, sort: true,
 		     seed: "experiment_id\tdonor\th5ad_filepath\n",
 		     storeDir:params.outdir)
+    // paste experiment_id and donor ID columns with __ separator
+    split_donor_h5ad.out.donors_h5ad_tsv
+	.map{a,b,c -> "${a}__${b}", c}
+	.collectFile(name: "exp__donors_h5ad.tsv", 
+		     newLine: false, sort: true,
+		     seed: "experiment_id\tdonor\th5ad_filepath\n",
+		     storeDir:params.outdir)
+    
     split_donor_h5ad.out.donors_h5ad_assigned_tsv
 	.collectFile(name: "donors_h5ad_assigned.tsv", 
 		     newLine: false, sort: true,
 		     seed: "experiment_id\tdonor\th5ad_filepath\n",
 		     storeDir:params.outdir)
+    // paste experiment_id and donor ID columns with __ separator
+    split_donor_h5ad.out.donors_h5ad_assigned_tsv
+	.map{a,b,c -> "${a}__${b}", c}
+	.collectFile(name: "exp__donors_h5ad_assigned.tsv", 
+		     newLine: false, sort: true,
+		     seed: "experiment_id\tdonor\th5ad_filepath\n",
+		     storeDir:params.outdir)
+
     split_donor_h5ad.out.h5ad_tsv
 	.collectFile(name: "cellranger_as_h5ad.tsv", 
 		     newLine: true, sort: true, // only one line in each file to collate, without ending new line character, so add it here.
@@ -76,6 +92,14 @@ workflow  main_deconvolution {
     // all vireo() outputs collected -> plot_donor_ncells(): 
     vireo_out_sample_summary_tsv
 	.collectFile(name: "vireo_donor_n_cells.tsv", 
+		     newLine: false, sort: true,
+		     seed: "experiment_id\tdonor\tn_cells\n",
+		     storeDir:params.outdir)
+	.set{ch_vireo_donor_n_cells_tsv} // donor column: donor0, .., donorx, doublet, unassigned
+    // paste experiment_id and donor ID columns with __ separator
+    vireo_out_sample_summary_tsv
+	.map{a,b,c -> "${a}__${b}", c}
+	.collectFile(name: "vireo_exp__donor_n_cells.tsv", 
 		     newLine: false, sort: true,
 		     seed: "experiment_id\tdonor\tn_cells\n",
 		     storeDir:params.outdir)
