@@ -13,6 +13,7 @@ process vireo_with_genotype {
     tuple val(samplename), path("vireo_${samplename}/*"), emit: output_dir
     tuple val(samplename), path("vireo_${samplename}/donor_ids.tsv"), emit: sample_donor_ids 
     path("vireo_${samplename}/${samplename}.sample_summary.txt"), emit: sample_summary_tsv
+    path("vireo_${samplename}/${samplename}__exp.sample_summary.txt"), emit: sample__exp_summary_tsv
 
     script:
     """
@@ -26,5 +27,9 @@ vireo -c $cell_data -o vireo_${samplename} -d ${donors_gt_vcf} -t GT
 cat vireo_${samplename}/summary.tsv | \\
   tail -n +2 | \\
   sed s\"/^/${samplename}\\t/\"g > vireo_${samplename}/${samplename}.sample_summary.txt
+
+cat vireo_${samplename}/summary.tsv | \\
+  tail -n +2 | \\
+  sed s\"/^/${samplename}__/\"g > vireo_${samplename}/${samplename}__exp.sample_summary.txt
     """
 }

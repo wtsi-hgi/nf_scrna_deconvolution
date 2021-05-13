@@ -41,6 +41,7 @@ workflow  main_deconvolution {
 			    .combine(subset_genotype.out.samplename_subsetvcf, by: 0))
 
 	vireo_out_sample_summary_tsv = vireo_with_genotype.out.sample_summary_tsv
+	vireo_out_sample__exp_summary_tsv = vireo_with_genotype.out.sample__exp_summary_tsv
 	vireo_out_sample_donor_ids = vireo_with_genotype.out.sample_donor_ids
     }
 
@@ -50,24 +51,25 @@ workflow  main_deconvolution {
 	vireo(cellsnp.out.cellsnp_output_dir.combine(ch_experiment_npooled, by: 0))
 
 	vireo_out_sample_summary_tsv = vireo.out.sample_summary_tsv
+	vireo_out_sample__exp_summary_tsv = vireo.out.sample__exp_summary_tsv
 	vireo_out_sample_donor_ids = vireo.out.sample_donor_ids
     }
 
     // vireo() outputs -> split_donor_h5ad(): 
     split_donor_h5ad(vireo_out_sample_donor_ids.combine(ch_experiment_filth5, by: 0))
-
+    
     // collect file paths to h5ad files in tsv tables:
     split_donor_h5ad.out.donors_h5ad_tsv
 	.collectFile(name: "donors_h5ad.tsv", 
 		     newLine: false, sort: true,
 		     seed: "experiment_id\tdonor\th5ad_filepath\n",
 		     storeDir:params.outdir)
+    
     // paste experiment_id and donor ID columns with __ separator
-    split_donor_h5ad.out.donors_h5ad_tsv
-	.map{a,b,c -> "${a}__${b}", c}
+    split_donor_h5ad.out.exp__donors_h5ad_tsv
 	.collectFile(name: "exp__donors_h5ad.tsv", 
 		     newLine: false, sort: true,
-		     seed: "experiment_id\tdonor\th5ad_filepath\n",
+		     seed: "experiment_id\th5ad_filepath\n",
 		     storeDir:params.outdir)
     
     split_donor_h5ad.out.donors_h5ad_assigned_tsv
@@ -75,12 +77,12 @@ workflow  main_deconvolution {
 		     newLine: false, sort: true,
 		     seed: "experiment_id\tdonor\th5ad_filepath\n",
 		     storeDir:params.outdir)
+    
     // paste experiment_id and donor ID columns with __ separator
-    split_donor_h5ad.out.donors_h5ad_assigned_tsv
-	.map{a,b,c -> "${a}__${b}", c}
+    split_donor_h5ad.out.exp__donors_h5ad_assigned_tsv
 	.collectFile(name: "exp__donors_h5ad_assigned.tsv", 
 		     newLine: false, sort: true,
-		     seed: "experiment_id\tdonor\th5ad_filepath\n",
+		     seed: "experiment_id\th5ad_filepath\n",
 		     storeDir:params.outdir)
 
     split_donor_h5ad.out.h5ad_tsv
@@ -96,16 +98,15 @@ workflow  main_deconvolution {
 		     seed: "experiment_id\tdonor\tn_cells\n",
 		     storeDir:params.outdir)
 	.set{ch_vireo_donor_n_cells_tsv} // donor column: donor0, .., donorx, doublet, unassigned
+    
     // paste experiment_id and donor ID columns with __ separator
-    vireo_out_sample_summary_tsv
-	.map{a,b,c -> "${a}__${b}", c}
+    vireo_out_sample__exp_summary_tsv
 	.collectFile(name: "vireo_exp__donor_n_cells.tsv", 
 		     newLine: false, sort: true,
-		     seed: "experiment_id\tdonor\tn_cells\n",
+		     seed: "experiment_id\tn_cells\n",
 		     storeDir:params.outdir)
-	.set{ch_vireo_donor_n_cells_tsv} // donor column: donor0, .., donorx, doublet, unassigned
 
-    plot_donor_ncells(ch_vireo_donor_n_cells_tsv)
+    //    plot_donor_ncells(ch_vireo_donor_n_cells_tsv)
 
 
     //emit:

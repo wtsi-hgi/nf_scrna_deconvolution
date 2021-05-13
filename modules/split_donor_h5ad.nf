@@ -15,8 +15,12 @@ process split_donor_h5ad {
     tuple val(sample), path("outputs/*.pdf"), emit: sample_pdf
     tuple val(sample), path("outputs/donor_level_anndata/*.h5ad"), emit: sample_donor_level_anndata 
     path("${sample}.donors.h5ad.tsv"), emit: donors_h5ad_tsv
+    path("${sample}__donors.h5ad.tsv"), emit: exp__donors_h5ad_tsv
     path("${sample}.donors.h5ad.assigned.tsv"), emit: donors_h5ad_assigned_tsv 
+    path("${sample}__donors.h5ad.assigned.tsv"), emit: exp__donors_h5ad_assigned_tsv 
     path("${sample}.h5ad.tsv"), emit: h5ad_tsv
+//    path("donors.list"), emit: donors_list
+//    path("donors.h5ad.list"), emit: donors_h5ad_list
     
     script:
     """
@@ -41,12 +45,20 @@ sed -i s\"/outputs/${params.split_h5ad_per_donor.absolute_results_path}\\/split_
 find outputs/donor_level_anndata -maxdepth 1 -name '*.h5ad' -type f -printf \"%f\\n\" | sort | cut -f1 -d'.' > donors.list
 find outputs/donor_level_anndata -maxdepth 1 -name '*.h5ad' | sort > donors.h5ad.list
 paste donors.list donors.h5ad.list > ${sample}.donors.h5ad.tsv
+
+# paste sample and donor columns 1 and 2 with __
+sed s\"/^/${sample}__/\"g ${sample}.donors.h5ad.tsv > ${sample}__donors.h5ad.tsv
+sed s\"/outputs/${params.split_h5ad_per_donor.absolute_results_path}\\/split_donor_h5ad\\/${sample}/\"g ${sample}__donors.h5ad.tsv
+
 sed -i s\"/^/$sample\\t/\"g ${sample}.donors.h5ad.tsv 
 sed -i s\"/outputs/${params.split_h5ad_per_donor.absolute_results_path}\\/split_donor_h5ad\\/${sample}/\"g ${sample}.donors.h5ad.tsv
+
 rm donors.list
 rm donors.h5ad.list
 
 # ignore unassigned/doublet h5ad (i.e. assigned cells only):
 cat ${sample}.donors.h5ad.tsv | grep -v unassigned | grep -v doublet > ${sample}.donors.h5ad.assigned.tsv
+
+cat ${sample}__donors.h5ad.tsv | grep -v unassigned | grep -v doublet > ${sample}__donors.h5ad.assigned.tsv
     """
 }
