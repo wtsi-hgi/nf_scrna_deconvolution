@@ -48,7 +48,7 @@ paste donors.list donors.h5ad.list > ${sample}.donors.h5ad.tsv
 
 # paste sample and donor columns 1 and 2 with __
 sed s\"/^/${sample}__/\"g ${sample}.donors.h5ad.tsv > ${sample}__donors.h5ad.tsv
-sed s\"/outputs/${params.split_h5ad_per_donor.absolute_results_path}\\/split_donor_h5ad\\/${sample}/\"g ${sample}__donors.h5ad.tsv
+sed -i s\"/outputs/${params.split_h5ad_per_donor.absolute_results_path}\\/split_donor_h5ad\\/${sample}/\"g ${sample}__donors.h5ad.tsv
 
 sed -i s\"/^/$sample\\t/\"g ${sample}.donors.h5ad.tsv 
 sed -i s\"/outputs/${params.split_h5ad_per_donor.absolute_results_path}\\/split_donor_h5ad\\/${sample}/\"g ${sample}.donors.h5ad.tsv
