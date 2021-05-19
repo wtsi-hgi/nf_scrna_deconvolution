@@ -106,7 +106,7 @@ workflow  main_deconvolution {
 		     seed: "experiment_id\tn_cells\n",
 		     storeDir:params.outdir)
 
-    //    plot_donor_ncells(ch_vireo_donor_n_cells_tsv)
+    plot_donor_ncells(ch_vireo_donor_n_cells_tsv)
 
 
     //emit:
