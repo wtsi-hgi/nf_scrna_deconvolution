@@ -59,14 +59,25 @@ def plot_donor_ncells(output_dir, sample_donor_summary_tsv, plotnine_dpi):
         os.makedirs(output_dir)
     
     df = pd.read_csv(sample_donor_summary_tsv, sep='\t', index_col=False)
+    logging.info(df)
 
     plots = []
 
     n_samples = df['experiment_id'].nunique()
+    logging.info('n_samples: ' + str(n_samples))
     samples_unique = df['experiment_id'].unique()
-    for samples in np.array_split(samples_unique, int(n_samples/8)):
-        print('samples:')
-        print(samples)
+    logging.info('samples_unique: ' + str(samples_unique))
+
+    if (n_samples > 8):
+        logging.info('n_samples > 8')
+        samples_split_per_page = np.array_split(samples_unique, int(n_samples/8))
+    else:
+        logging.info('n_samples <= 8')
+        samples_split_per_page = [samples_unique]
+    logging.info('samples_split_per_page: ' + str(samples_split_per_page))
+    
+    for samples in samples_split_per_page:
+        logging.info('samples: ' + str(samples))
         y = df[df['experiment_id'].isin(samples)]
         gplt = plt9.ggplot(y, plt9.aes(
             x='donor',
