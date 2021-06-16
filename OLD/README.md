@@ -1,3 +1,0 @@
-# nextflow_ci
-
-deconv
