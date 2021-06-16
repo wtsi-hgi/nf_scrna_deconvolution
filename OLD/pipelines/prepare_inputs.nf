@@ -1,7 +1,7 @@
 nextflow.enable.dsl=2
 
 include { from_barcodes } from './prepare_inputs/from_barcodes.nf'
-include { from_cellbender } from './prepare_inputs/from_cellbender.nf'
+include { from_cellranger_filt_directory } from './prepare_inputs/from_cellranger_filt_directory.nf'
 include { from_h5 } from './prepare_inputs/from_h5.nf'
 
 workflow prepare_inputs {
@@ -45,26 +45,18 @@ workflow prepare_inputs {
 	ch_experiment_filth5 = from_h5.out.ch_experiment_filth5
 	ch_experiment_donorsvcf_donorslist = from_h5.out.ch_experiment_donorsvcf_donorslist
 
-    } else if(params.cellsnp_input_table_mode == 'from_cellbender') {
-
-	log.info "input mode: from_cellbender"
+    } else if(params.cellsnp_input_table_mode == 'from_cellranger_filt_directory') {
 	
-	channel_input_n_pooled_table = Channel.fromPath(params.input_n_pooled_table, followLinks: true, checkIfExists: true)
-	channel_input_bam_table = Channel.fromPath(params.input_bam_table, followLinks: true, checkIfExists: true)
-	channel_input_data_path_filt_h5_table = Channel.fromPath(params.input_data_path_filt_h5_table, followLinks: true, checkIfExists: true)
-	
-	from_cellbender(channel_input_data_table,
-			channel_input_n_pooled_table,
-			channel_input_bam_table,
-			channel_input_data_path_filt_h5_table)
+	log.info "input mode: from_cellranger_filt_directory"
+	from_cellranger_filt_directory(channel_input_data_table)
 
-	ch_experiment_bam_bai_barcodes = from_cellbender.out.ch_experiment_bam_bai_barcodes
-	ch_experiment_npooled = from_cellbender.out.ch_experiment_npooled
-	ch_experiment_filth5 = from_cellbender.out.ch_experiment_filth5
-	ch_experiment_donorsvcf_donorslist = from_cellbender.out.ch_experiment_donorsvcf_donorslist
+	ch_experiment_bam_bai_barcodes = from_cellranger_filt_directory.out.ch_experiment_bam_bai_barcodes
+	ch_experiment_npooled = from_cellranger_filt_directory.out.ch_experiment_npooled
+	ch_experiment_filth5 = from_cellranger_filt_directory.out.ch_experiment_filth5
+	ch_experiment_donorsvcf_donorslist = from_cellranger_filt_directory.out.ch_experiment_donorsvcf_donorslist
 	
     } else {
-	log.info "Error: input parameter 'cellsnp_input_table_mode' should be set to either 'from_barcodes' or 'from_h5' or 'from_cellbender'"
+	log.info "Error: input parameter 'cellsnp_input_table_mode' should be set to either 'from_barcodes' or 'from_h5' or 'from_cellranger_filt_directory'"
 	exit 1
     }
     

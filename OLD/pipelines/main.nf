@@ -16,13 +16,13 @@ workflow {
     log.info "inputs parameters are: $params"
 
     // prepare input channels, depending on which input mode was chosen:
-    //if (! file(params.input_data_table).isEmpty()) {
-    prepare_inputs(Channel.fromPath(params.input_data_table, followLinks: true, checkIfExists: true))
-    //} else {
-//	log.info "ERROR: params.input_data_table should be valid path to a (non-empty) input table file."
-//	log.info "Please fix input param 'input_data_table' (currently set to $params.input_data_table)"
-//	exit 1
-  //  }
+    if (! file(params.input_data_table).isEmpty()) {
+	prepare_inputs(Channel.fromPath(params.input_data_table))
+    } else {
+	log.info "ERROR: params.input_data_table should be valid path to a (non-empty) input table file."
+	log.info "Please fix input param 'input_data_table' (currently set to $params.input_data_table)"
+	exit 1
+    }
     
     // run main deconvolution pipeline on prepared input channels:
     main_deconvolution(prepare_inputs.out.ch_experiment_bam_bai_barcodes,

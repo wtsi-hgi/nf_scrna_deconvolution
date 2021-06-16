@@ -31,7 +31,6 @@ python $workflow.projectDir/../bin/split_h5ad_per_donor.py \\
   --filtered_matrix_h5 ${filtered_matrix_h5} \\
   --samplename ${sample} \\
   --output_dir \$PWD/outputs \\
-  --input_h5_genome_version ${params.split_h5ad_per_donor.input_h5_genome_version} \\
   --print_modules_version ${params.split_h5ad_per_donor.print_modules_version} \\
   --plot_n_cells_per_vireo_donor ${params.split_h5ad_per_donor.plot_n_cells_per_vireo_donor} \\
   --write_donor_level_filtered_cells_h5 ${params.split_h5ad_per_donor.write_donor_level_filtered_cells_h5} \\

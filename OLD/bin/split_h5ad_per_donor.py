@@ -41,16 +41,13 @@ from plotnine.ggplot import save_as_pdf_pages
               help='output directory for script output plots and files')
 
 @click.option('-m','--print_modules_version', default=False, show_default=True, type=bool,
-              help='True or False: whether to print version of all python module to file.')
+              help='True or False: whetherer to print version of all python module to file.')
 
 @click.option('-p','--plot_n_cells_per_vireo_donor', default=True, show_default=True,  type=bool,
-              help='True or False: whether to plot number of cells per deconvoluted donor to pdf in --output_dir')
-
-@click.option('-g','--input_h5_genome_version', default="GRCh38", show_default=True, type=str,
-              help='True or False: whether to write donor level scanpy hdf5 objects to dir --output_dir')
+              help='True or False: whetherer to plot number of cells per deconvoluted donor to pdf in --output_dir')
 
 @click.option('-w','--write_donor_level_filtered_cells_h5', default=True, show_default=True, type=bool,
-              help='True or False: whether to write donor level scanpy hdf5 objects to dir --output_dir')
+              help='True or False: whetherer to write donor level scanpy hdf5 objects to dir --output_dir')
 
 @click.option('-c','--anndata_compression_level', default=6,
               type=click.IntRange(1, 9, clamp=True), show_default=True,
@@ -63,7 +60,6 @@ from plotnine.ggplot import save_as_pdf_pages
 
 def split_h5ad_per_donor(vireo_donor_ids_tsv, filtered_matrix_h5, samplename,
                          output_dir, print_modules_version, plot_n_cells_per_vireo_donor,
-                         input_h5_genome_version,
                          write_donor_level_filtered_cells_h5, plotnine_dpi,
                          anndata_compression_level):
     """split_h5ad_donor main script"""
@@ -82,7 +78,7 @@ def split_h5ad_per_donor(vireo_donor_ids_tsv, filtered_matrix_h5, samplename,
     plt9.options.dpi = plotnine_dpi   
 
     if not os.path.exists(output_dir):
-        logging.info('creating directory ' + output_dir)
+        print('creating directory ' + output_dir)
         os.makedirs(output_dir)
 
     # print modules version to output file.
@@ -92,31 +88,13 @@ def split_h5ad_per_donor(vireo_donor_ids_tsv, filtered_matrix_h5, samplename,
                 if hasattr(module, '__version__'): 
                     f.write(str(name) + '=' + str(module.__version__) + '\n') 
 
-    # fix genome key in cellbender h5 output
-    import tables
-    logging.info('fixing orig_h5')
-    orig_h5 = filtered_matrix_h5
-    fixed_h5 = 'fixed_genome.h5'
-    tables.copy_file(orig_h5, fixed_h5, overwrite = True)
-    with tables.open_file(fixed_h5, "r+") as f:
-        n = f.get_node("/matrix/features")
-        n_genes = f.get_node("/matrix/shape")[0]
-        if "genome" not in n:
-            f.create_array(n, "genome", np.repeat(input_h5_genome_version, n_genes))
-    # read-in cellranger 10x data produced by 'cellranger count':
-    logging.info('fixed orig_h5 into fixed_h5')
-    adata = sc.read_10x_h5(fixed_h5) #, genome='background_removed')
-    # adata = sc.read_10x_h5(filtered_matrix_h5) #, genome='background_removed')
 
-    logging.info(adata.var)
-    logging.info(adata.obsm)
-    logging.info("n cells len(adata.obs): " + str(len(adata.obs)))
-    # logging.info('exiting..'); sys.exit()
-    
+    # read-in cellranger 10x data produced by 'cellranger count':
+    adata = sc.read_10x_h5(filtered_matrix_h5)
     adata.var['gene_symbols'] = adata.var.index
     adata.var.index = adata.var['gene_ids'].values
     del adata.var['gene_ids']
-    
+
     # also read-in the cell deconvolution annotation produced by Vireo:
     vireo_anno_deconv_cells = pd.read_csv(vireo_donor_ids_tsv, sep='\t',
                                           index_col='cell')
@@ -124,24 +102,20 @@ def split_h5ad_per_donor(vireo_donor_ids_tsv, filtered_matrix_h5, samplename,
     # calculate number of cells per deconvoluted donor:
     cells_per_donor_count = vireo_anno_deconv_cells[['donor_id']].value_counts().to_frame('n_cells')
     cells_per_donor_count.reset_index(level=cells_per_donor_count.index.names, inplace=True)
-    logging.info('cells_per_donor_count:')
-    logging.info(cells_per_donor_count)
-    logging.info('sum(cells_per_donor_count.n_cells: ' + str(sum(cells_per_donor_count.n_cells)))
 
     # check that `adata` and `vireo_anno_deconv_cells` indexes DO match, as expected:
-    logging.info('len(vireo_anno_deconv_cells.index): ' + str(len(vireo_anno_deconv_cells.index)))
     for cell_in_vireo_index in vireo_anno_deconv_cells.index:
         if cell_in_vireo_index not in adata.obs_names:
-            logging.info('warning: cell index ' + cell_in_vireo_index + ' is in vireo_anno_deconv_cells but not in adata')
+            print('error: cell index ' + cell_in_vireo_index + ' is in vireo_anno_deconv_cells but not in adata')
 
     # add Vireo annotation to adata
     adata.obs['convoluted_samplename'] = samplename
     for new_cell_annotation in ['donor_id','prob_max','prob_doublet','n_vars','best_singlet','best_doublet']:
         if new_cell_annotation in vireo_anno_deconv_cells.columns:
-            logging.info('adding vireo annotation ' + new_cell_annotation + ' to AnnData object.')
+            print('adding vireo annotation ' + new_cell_annotation + ' to AnnData object.')
             adata.obs[new_cell_annotation] = vireo_anno_deconv_cells[new_cell_annotation]
         else:
-            logging.info('warning: column ' + new_cell_annotation + ' is not in input Vireo annotation tsv.')        
+            print('warning: column ' + new_cell_annotation + ' is not in input Vireo annotation tsv.')        
 
     # plot n cells per deconvoluted Vireo donor:
     if plot_n_cells_per_vireo_donor:
@@ -165,29 +139,23 @@ def split_h5ad_per_donor(vireo_donor_ids_tsv, filtered_matrix_h5, samplename,
 
     # write AnnData with Vireo cell annotation in .obs
     output_file = output_dir + '/vireo_annot.' + samplename
-    logging.info('Write h5ad AnnData with Vireo cell annotation in .obs to ' + output_file)
+    print('Write h5ad AnnData with Vireo cell annotation in .obs to ' + output_file)
     adata.write('{}.h5ad'.format(output_file), compression='gzip', compression_opts= anndata_compression_level)
     
     if write_donor_level_filtered_cells_h5:
     
         if not os.path.exists(output_dir + '/donor_level_anndata'):
-            logging.info('creating directory ' + output_dir + '/donor_level_anndata')
+            print('creating directory ' + output_dir + '/donor_level_anndata')
             os.makedirs(output_dir + '/donor_level_anndata')
         
         adata_donors = []
         for donor_id in adata.obs['donor_id'].unique():
-            donor_id = str(donor_id)
-            logging.info('filtering cells of AnnData to donor ' + donor_id)
+            print('filtering cells of AnnData to donor ' + donor_id)
             adata_donor = adata[adata.obs['donor_id'] == donor_id, :]
-            logging.info("n cells len(adata_donor.obs) for " + donor_id  + ': ' + str(len(adata_donor.obs)) + '/' + str(len(adata.obs)))
-            if len(adata_donor.obs) > 0:
-                logging.info("more than 0 cells for donor") 
-                adata_donors.append((donor_id, adata_donor))  
-                output_file = output_dir + '/donor_level_anndata/' + donor_id + '.' + samplename
-                logging.info('Write h5ad donor AnnData to ' + output_file)
-                adata_donor.write('{}.h5ad'.format(output_file), compression='gzip', compression_opts= anndata_compression_level)
-            else:
-                logging.info("0 cells for donor, therefore no writing donor-specific h5ad.")
+            adata_donors.append((donor_id, adata_donor))  
+            output_file = output_dir + '/donor_level_anndata/' + donor_id + '.' + samplename
+            print('Write h5ad donor AnnData to ' + output_file)
+            adata_donor.write('{}.h5ad'.format(output_file), compression='gzip', compression_opts= anndata_compression_level)
 
 if __name__ == '__main__':
     # set logging level and handler:
