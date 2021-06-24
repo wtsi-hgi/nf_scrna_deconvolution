@@ -9,7 +9,7 @@ default container for all steps:
 https://github.com/wtsi-hgi/scrna_deconvolution_container
   
 
-container for soupocell step:
+container for souporcell step:
 ```
 singularity pull shub://wheaton5/souporcell
 ```
