@@ -31,7 +31,7 @@ souporcell_pipeline.py \\
   -b bar_codes.txt \\
   -f ${reference_fasta} \\
   -t ${task.cpus} \\ 
-  -o . \\
+  -o \$PWD \\
   -k ${souporcell_n_clusters}
     """
 }
