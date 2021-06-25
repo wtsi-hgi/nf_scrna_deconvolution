@@ -4,11 +4,10 @@ scRNA deconvolution
 
 ### containers
 
-default container for all steps:  
+2 containers are used:
+- default container for all steps:  
 https://github.com/wtsi-hgi/scrna_deconvolution_container
-  
-
-container for souporcell step:
+-  container for souporcell step:
 ```
 singularity pull shub://wheaton5/souporcell
 ```
