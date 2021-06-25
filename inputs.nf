@@ -96,6 +96,17 @@ params {
 	}
     }
 
+    souporcell {
+	run = true // whether to run 'souporcell' task
+
+	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
+	copy_mode = "rellink" // choose "rellink", "symlink", "move" or "copy".
+	// Make sure copy_mode is either "copy" or "move" when remove_workdir = true
+
+	reference_fasta = '/lustre/...'
+	n_clusters = 4
+    }
+
     plot_donor_ncells {
 	run = true // whether to run 'plot_donor_ncells' task (multi-pages pdf for all samples Vireo deconvolutions)
 	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
