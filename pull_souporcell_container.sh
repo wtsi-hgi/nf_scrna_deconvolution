@@ -1,3 +1,10 @@
+#!/usr/bin/env bash
+
+# for internal Sanger use:
+#  this repo is cloned at /lustre/scratch123/hgi/projects/ukbb_scrna/pipelines/singularity_images/nf_scrna_deconvolution
+#  so that is script pulls image at
+#  /lustre/scratch123/hgi/projects/ukbb_scrna/pipelines/singularity_images/
+
 tag=latest
 
 registry_path=shub://wheaton5/souporcell:${tag}
