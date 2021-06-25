@@ -24,10 +24,10 @@ params {
     // input_n_pooled_table colums: experiment_id   n_pooled
     // hgi note: from nf_fetch pipeline
 
-    input_n_pooled_table = '/lustre/scratch123/pipelines/Pilot_UKB/wbc_mult_donor/results/join_gsheet_metadata/nf_fetch_samples_to_deconv.tsv'
+    input_n_pooled_table = '/lustre/scratch123/pipelines/Pilot_UKB/fetch/wbc_mult_donor/results/join_gsheet_metadata/nf_fetch_samples_to_deconv.tsv'
     // input_bam_table colums: experiment_id  data_path_bam_file
     // hgi note: from nf_fetch pipeline
-    input_bam_table = '/lustre/scratch123/pipelines/Pilot_UKB/wbc_mult_donor/results/join_gsheet_metadata/nf_fetch_samples_to_deconv.tsv'
+    input_bam_table = '/lustre/scratch123/pipelines/Pilot_UKB/fetch/wbc_mult_donor/results/join_gsheet_metadata/nf_fetch_samples_to_deconv.tsv'
     
     // input_data_path_filt_h5_table:
     //    currently same table as input_data_table: deduces filtered cellbender h5 output file from column data_path_10x_format to create columns: experiment_id  data_path_filt_h5
@@ -112,7 +112,7 @@ params {
 	// Make sure copy_mode is either "copy" or "move" when remove_workdir = true
 
 	// next, optional arguments for python script split_h5ad_per_donor.py (cf. bin directory)
-	input_h5_genome_version = "GRCh38"
+	input_h5_genome_version = "GRCh38" // genome annoation for input h5 if absent
 	print_modules_version = "True"
 	plot_n_cells_per_vireo_donor = "True"
 	write_donor_level_filtered_cells_h5 = "True"
