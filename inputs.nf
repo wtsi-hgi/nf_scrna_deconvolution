@@ -103,7 +103,10 @@ params {
 	copy_mode = "rellink" // choose "rellink", "symlink", "move" or "copy".
 	// Make sure copy_mode is either "copy" or "move" when remove_workdir = true
 
-	reference_fasta = '/lustre/...'
+	// to get this ref file, cf. script inputs/get_souporcell_ref.sh
+	reference_fasta = '/lustre/scratch123/pipelines/pipeline_inputs/deconv/refdata-cellranger-GRCh38-3.0.0'
+	// path is secure lustre path from openstack instance, not Sanger farm path
+	//   reference_fasta = '/lustre/scratch123/hgi/projects/ukbb_scrna/pipelines/pipeline_inputs/deconv/refdata-cellranger-GRCh38-3.0.0'
 	n_clusters = 4
     }
 
