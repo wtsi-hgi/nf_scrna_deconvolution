@@ -6,3 +6,4 @@ tar -xzvf refdata-cellranger-GRCh38-3.0.0.tar.gz
 
 # this will create folder refdata-cellranger-GRCh38-3.0.0 in current dir
 # Sanger HGI scRNA: run at /lustre/scratch123/hgi/projects/ukbb_scrna/pipelines/pipeline_inputs/deconv/nf_scrna_deconvolution/inputs
+#   copy to cache cp /lustre/scratch123/pipelines/singularity_images/shub_wheaton5_souporcell_latest.img /home/ubuntu/singularity_images/
