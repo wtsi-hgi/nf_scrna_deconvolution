@@ -23,7 +23,7 @@ workflow  main_deconvolution {
     log.info "running workflow main_deconvolution() ..."
 
     souporcell(ch_experiment_bam_bai_barcodes, // tuple val(samplename), path(bam_file), path(bai_file), path(barcodes_tsv_gz)
-	       Channel.from(params.souporcell.n_clusters), // val(souporcell_n_clusters)
+	       Channel.from(params.souporcell.n_clusters).collect(), // val(souporcell_n_clusters)
 	       Channel.fromPath(params.souporcell.reference_fasta).collect()) // file(reference_fastq)
 
     // cellsnp() from pipeline provided inputs:
