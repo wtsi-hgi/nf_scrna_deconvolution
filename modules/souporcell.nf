@@ -11,8 +11,8 @@ process souporcell {
 
     input: 
     tuple val(samplename), path(bam_file), path(bai_file), path(barcodes_tsv_gz)
-    file(reference_fastq)
     val(souporcell_n_clusters)
+    file(reference_fastq)
     
     output:
     tuple val(samplename), file("souporcell_${samplename}"), emit: souporcell_output_dir
