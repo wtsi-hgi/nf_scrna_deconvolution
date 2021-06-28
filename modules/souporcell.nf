@@ -1,14 +1,17 @@
 process souporcell {
     // cf. https://github.com/wheaton5/souporcell
     tag "${samplename}"
-    publishDir "${params.outdir}/souporcell/", mode: "${params.souporcell.copy_mode}", pattern: "souporcell_${samplename}", overwrite: true
+    publishDir "${params.outdir}/souporcell/",
+	mode: "${params.souporcell.copy_mode}",
+	pattern: "souporcell_${samplename}",
+	overwrite: true
     
     when: 
     params.souporcell.run
 
     input: 
     tuple val(samplename), path(bam_file), path(bai_file), path(barcodes_tsv_gz)
-    file(region_vcf)
+    file(reference_fastq)
     val(souporcell_n_clusters)
     
     output:
