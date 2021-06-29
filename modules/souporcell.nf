@@ -3,7 +3,7 @@ process souporcell {
     tag "${samplename}"
     publishDir "${params.outdir}/souporcell/",
 	mode: "${params.souporcell.copy_mode}",
-	pattern: "souporcell_${samplename}",
+	pattern: "${samplename}",
 	overwrite: true
     
     when: 
@@ -15,7 +15,8 @@ process souporcell {
     file(reference_fasta)
     
     output:
-    tuple val(samplename), file("souporcell_${samplename}"), emit: souporcell_output_dir
+    tuple val(samplename), file("${samplename}"), emit: souporcell_output_dir
+    tuple val(samplename), file("${samplename}/clusters.tsv"), file("${samplename}/cluster_genotypes.vcf"), file("${samplename}/ambient_rna.txt"), emit: souporcell_output_files
 
     script:
     """
@@ -34,8 +35,13 @@ souporcell_pipeline.py \\
   -b bar_codes.txt \\
   -f ${reference_fasta} \\
   -t ${task.cpus} \\
-  -o \$PWD \\
+  -o ${samplename} \\
   -k ${souporcell_n_clusters}
+
+# debug only, to remove:
+ls -ltra > /lustre/scratch123/pipelines/Pilot_UKB/deconv/dev_souporcell/tmp/${samplename}.list
+ls -ltra ${samplename} > /lustre/scratch123/pipelines/Pilot_UKB/deconv/dev_souporcell/tmp/${samplename}.list2
+find . > /lustre/scratch123/pipelines/Pilot_UKB/deconv/dev_souporcell/tmp/${samplename}.list3
     """
 }
 
