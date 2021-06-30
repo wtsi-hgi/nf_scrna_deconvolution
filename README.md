@@ -5,7 +5,7 @@ scRNA deconvolution
 ### containers
 
 2 containers are used:
-- default container for all steps:  
+- main container, which is default for all steps:  
 https://github.com/wtsi-hgi/scrna_deconvolution_container
 -  container for souporcell step:
   ```
