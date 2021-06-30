@@ -1,6 +1,4 @@
-# nextflow_ci
-
-scRNA deconvolution
+## scRNA deconvolution Nextflow pipeline
 
 ### containers
 
