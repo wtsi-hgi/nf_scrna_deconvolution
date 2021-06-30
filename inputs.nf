@@ -24,10 +24,10 @@ params {
     // input_n_pooled_table colums: experiment_id   n_pooled
     // hgi note: from nf_fetch pipeline
 
-    input_n_pooled_table = '/lustre/scratch123/pipelines/Pilot_UKB/wbc_mult_donor/results/join_gsheet_metadata/nf_fetch_samples_to_deconv.tsv'
+    input_n_pooled_table = '/lustre/scratch123/pipelines/Pilot_UKB/fetch/wbc_mult_donor/results/join_gsheet_metadata/nf_fetch_samples_to_deconv.tsv'
     // input_bam_table colums: experiment_id  data_path_bam_file
     // hgi note: from nf_fetch pipeline
-    input_bam_table = '/lustre/scratch123/pipelines/Pilot_UKB/wbc_mult_donor/results/join_gsheet_metadata/nf_fetch_samples_to_deconv.tsv'
+    input_bam_table = '/lustre/scratch123/pipelines/Pilot_UKB/fetch/wbc_mult_donor/results/join_gsheet_metadata/nf_fetch_samples_to_deconv.tsv'
     
     // input_data_path_filt_h5_table:
     //    currently same table as input_data_table: deduces filtered cellbender h5 output file from column data_path_10x_format to create columns: experiment_id  data_path_filt_h5
@@ -96,6 +96,20 @@ params {
 	}
     }
 
+    souporcell {
+	run = true // whether to run 'souporcell' task
+
+	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
+	copy_mode = "rellink" // choose "rellink", "symlink", "move" or "copy".
+	// Make sure copy_mode is either "copy" or "move" when remove_workdir = true
+
+	// to get this ref file, cf. script inputs/get_souporcell_ref.sh
+	reference_fasta = '/lustre/scratch123/pipelines/pipeline_inputs/deconv/refdata-cellranger-GRCh38-3.0.0/fasta/genome.fa'
+	// path is secure lustre path from openstack instance, not Sanger farm path
+	//   reference_fasta = '/lustre/scratch123/hgi/projects/ukbb_scrna/pipelines/pipeline_inputs/deconv/refdata-cellranger-GRCh38-3.0.0'
+	n_clusters = 4
+    }
+
     plot_donor_ncells {
 	run = true // whether to run 'plot_donor_ncells' task (multi-pages pdf for all samples Vireo deconvolutions)
 	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
@@ -112,7 +126,7 @@ params {
 	// Make sure copy_mode is either "copy" or "move" when remove_workdir = true
 
 	// next, optional arguments for python script split_h5ad_per_donor.py (cf. bin directory)
-	input_h5_genome_version = "GRCh38"
+	input_h5_genome_version = "GRCh38" // genome annoation for input h5 if absent
 	print_modules_version = "True"
 	plot_n_cells_per_vireo_donor = "True"
 	write_donor_level_filtered_cells_h5 = "True"

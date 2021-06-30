@@ -5,9 +5,11 @@ include { cellsnp } from '../modules/cellsnp.nf'
 include { split_donor_h5ad } from '../modules/split_donor_h5ad.nf'
 include { plot_donor_ncells } from '../modules/plot_donor_ncells.nf'
 include { vireo } from '../modules/vireo.nf'
+include { souporcell } from '../modules/souporcell.nf'
 // modules to run Vireo with genotype input:
 include { subset_genotype } from '../modules/subset_genotype.nf'
 include { vireo_with_genotype } from '../modules/vireo_with_genotype.nf'
+
 
 workflow  main_deconvolution {
 
@@ -19,6 +21,10 @@ workflow  main_deconvolution {
 
     main:
     log.info "running workflow main_deconvolution() ..."
+
+    souporcell(ch_experiment_bam_bai_barcodes, // tuple val(samplename), path(bam_file), path(bai_file), path(barcodes_tsv_gz)
+	       Channel.from(params.souporcell.n_clusters).collect(), // val(souporcell_n_clusters)
+	       Channel.fromPath(params.souporcell.reference_fasta).collect()) // file(reference_fastq)
 
     // cellsnp() from pipeline provided inputs:
     cellsnp(ch_experiment_bam_bai_barcodes,
