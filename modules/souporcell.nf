@@ -37,11 +37,6 @@ souporcell_pipeline.py \\
   -t ${task.cpus} \\
   -o ${samplename} \\
   -k ${souporcell_n_clusters}
-
-# debug only, to remove:
-ls -ltra > /lustre/scratch123/pipelines/Pilot_UKB/deconv/dev_souporcell/tmp/${samplename}.list
-ls -ltra ${samplename} > /lustre/scratch123/pipelines/Pilot_UKB/deconv/dev_souporcell/tmp/${samplename}.list2
-find . > /lustre/scratch123/pipelines/Pilot_UKB/deconv/dev_souporcell/tmp/${samplename}.list3
     """
 }
 
