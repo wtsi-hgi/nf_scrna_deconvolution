@@ -96,20 +96,6 @@ params {
 	}
     }
 
-    souporcell {
-	run = true // whether to run 'souporcell' task
-
-	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
-	copy_mode = "rellink" // choose "rellink", "symlink", "move" or "copy".
-	// Make sure copy_mode is either "copy" or "move" when remove_workdir = true
-
-	// to get this ref file, cf. script inputs/get_souporcell_ref.sh
-	reference_fasta = '/lustre/scratch123/pipelines/pipeline_inputs/deconv/refdata-cellranger-GRCh38-3.0.0/fasta/genome.fa'
-	// path is secure lustre path from openstack instance, not Sanger farm path
-	//   reference_fasta = '/lustre/scratch123/hgi/projects/ukbb_scrna/pipelines/pipeline_inputs/deconv/refdata-cellranger-GRCh38-3.0.0'
-	n_clusters = 4
-    }
-
     plot_donor_ncells {
 	run = true // whether to run 'plot_donor_ncells' task (multi-pages pdf for all samples Vireo deconvolutions)
 	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
@@ -146,6 +132,27 @@ params {
 	// Make sure copy_mode is either "copy" or "move" when remove_workdir = true
     }
 
+    souporcell {
+	run = true // whether to run 'souporcell' task
+
+	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
+	copy_mode = "rellink" // choose "rellink", "symlink", "move" or "copy".
+	// Make sure copy_mode is either "copy" or "move" when remove_workdir = true
+
+	// to get this ref file, cf. script inputs/get_souporcell_ref.sh
+	reference_fasta = '/lustre/scratch123/pipelines/pipeline_inputs/deconv/refdata-cellranger-GRCh38-3.0.0/fasta/genome.fa'
+	// path is secure lustre path from openstack instance, not Sanger farm path
+	//   reference_fasta = '/lustre/scratch123/hgi/projects/ukbb_scrna/pipelines/pipeline_inputs/deconv/refdata-cellranger-GRCh38-3.0.0'
+	n_clusters = 4
+    }
+    
+    venn_diagram_souporcell_vs_vireo {
+	// if both souporcell and vireo are set to run,
+	//   then a Venn diagram can be made to compare cell assignements (to deconvoluted donor/cluster, doublet or unassigned)
+	run = true // whether to run 'venn_diagram_souporcell_vs_vireo' task
+	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
+	copy_mode = "rellink" // choose "rellink", "symlink", "move" or "copy".
+    }
 
     // other input parameters common to all input modes:
 
