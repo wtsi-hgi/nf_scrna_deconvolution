@@ -146,7 +146,7 @@ params {
 	n_clusters = 4
     }
     
-    venn_diagram_souporcell_vs_vireo {
+    plot_diagram_souporcell_vs_vireo {
 	// if both souporcell and vireo are set to run,
 	//   then a Venn diagram can be made to compare cell assignements (to deconvoluted donor/cluster, doublet or unassigned)
 	run = true // whether to run 'venn_diagram_souporcell_vs_vireo' task
