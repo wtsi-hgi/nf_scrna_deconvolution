@@ -10,7 +10,7 @@ include { souporcell } from '../modules/souporcell.nf'
 include { subset_genotype } from '../modules/subset_genotype.nf'
 include { vireo_with_genotype } from '../modules/vireo_with_genotype.nf'
 // if souporcell and vireo were both run, compare cell assigments with venn diagram
-include { venn_diagram_souporcell_vs_vireo } from '../modules/venn_diagram_souporcell_vs_vireo.nf'
+include { plot_souporcell_vs_vireo } from '../modules/plot_souporcell_vs_vireo.nf'
 
 
 workflow  main_deconvolution {
@@ -120,7 +120,7 @@ workflow  main_deconvolution {
     if (params.souporcell && params.vireo.run) {
 	log.info "both souporcell and vireo were run."
 	log.ingo "making venn diagram to compare cell deconvolution assignments."
-	venn_diagram_souporcell_vs_vireo(
+	plot_souporcell_vs_vireo(
 	    vireo_out_sample_donor_ids // tuple val(samplename), file("${samplename}/donor_ids.tsv")
 		// combine with tuple val(samplename), file("${samplename}/clusters.tsv"):
 		.combine(souporcell.out.souporcell_output_files.map {a,b,c,d -> tuple(a,b)},
