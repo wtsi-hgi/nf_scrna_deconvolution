@@ -18,6 +18,7 @@ process plot_souporcell_vs_vireo {
     """
 umask 2 # make files group_writable
 
-plot_souporcell_vs_vireo.R ${samplename} ${donor_ids_tsv} ${clusters_tsv}
+Rscript --vanilla plot_souporcell_vs_vireo.R ${samplename} ${donor_ids_tsv} ${clusters_tsv}
     """
 }
+//  --vanilla on the end, tells Rscript to run without saving or restoring anything in the process. 
