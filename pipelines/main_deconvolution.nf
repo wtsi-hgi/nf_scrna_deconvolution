@@ -129,7 +129,7 @@ workflow  main_deconvolution {
     
     if (params.souporcell && params.vireo.run) {
 	log.info "both souporcell and vireo were run."
-	log.info "making ploy to compare souporcell vs vireo cell deconvolution assignments."
+	log.info "making plot to compare souporcell vs vireo cell deconvolution assignments."
 	plot_souporcell_vs_vireo(
 	    vireo_out_sample_donor_ids // tuple val(samplename), file("${samplename}/donor_ids.tsv")
 		// combine with tuple val(samplename), file("${samplename}/clusters.tsv"):
