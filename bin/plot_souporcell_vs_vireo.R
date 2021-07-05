@@ -51,6 +51,5 @@ p = ggplot(data=df, aes(x=assign_souporcell, y=nn, fill=assign_souporcell)) +
        title=" Souporcell vs Vireo cell cluster assignements")
 
 # To save to file, here on A4 paper
-ggsave(paste0(sample_name,
-              "souporcell_vs_vireo_cell_cluster_assignements.pdf"),
+ggsave(paste0(sample_name, "_souporcell_vs_vireo.pdf"),
        p, width = 21, height = 29.7, units = "cm")
