@@ -134,6 +134,9 @@ params {
 
     souporcell {
 	run = true // whether to run 'souporcell' task
+        // provides RAW cellranger barcodes as input to souporcell:
+	//  must have columns experiment_id and data_path_barcodes
+	path_raw_barcodes_table = '/lustre/scratch123/pipelines/Pilot_UKB/fetch/wbc_mult_donor/results/raw.Submission_Data_Pilot_UKB.file_paths_10x.tsv'
 
 	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
 	copy_mode = "rellink" // choose "rellink", "symlink", "move" or "copy".
@@ -143,7 +146,6 @@ params {
 	reference_fasta = '/lustre/scratch123/pipelines/pipeline_inputs/deconv/refdata-cellranger-GRCh38-3.0.0/fasta/genome.fa'
 	// path is secure lustre path from openstack instance, not Sanger farm path
 	//   reference_fasta = '/lustre/scratch123/hgi/projects/ukbb_scrna/pipelines/pipeline_inputs/deconv/refdata-cellranger-GRCh38-3.0.0'
-	n_clusters = 4
     }
     
     plot_diagram_souporcell_vs_vireo {
