@@ -148,7 +148,7 @@ params {
 	//   reference_fasta = '/lustre/scratch123/hgi/projects/ukbb_scrna/pipelines/pipeline_inputs/deconv/refdata-cellranger-GRCh38-3.0.0'
     }
     
-    plot_diagram_souporcell_vs_vireo {
+    plot_souporcell_vs_vireo {
 	// if both souporcell and vireo are set to run,
 	//   then a Venn diagram can be made to compare cell assignements (to deconvoluted donor/cluster, doublet or unassigned)
 	run = true // whether to run 'venn_diagram_souporcell_vs_vireo' task
