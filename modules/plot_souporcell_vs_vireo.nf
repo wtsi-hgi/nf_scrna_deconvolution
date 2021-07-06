@@ -2,7 +2,7 @@ process plot_souporcell_vs_vireo {
     tag "${samplename}"
     publishDir "${params.outdir}/souporcell_vs_vireo/",
 	mode: "${params.plot_souporcell_vs_vireo.copy_mode}",
-	pattern: "${samplename}",
+	pattern: "${samplename}_souporcell_vs_vireo.pdf",
 	overwrite: true
     
     when: 
