@@ -134,7 +134,10 @@ params {
 
     souporcell {
 	run = true // whether to run 'souporcell' task
-        // provides RAW cellranger barcodes as input to souporcell:
+
+	// run souporcell on raw or filtered barcodes:
+	use_raw_barcodes = false
+	// provides RAW cellranger barcodes as input to souporcell:
 	//  must have columns experiment_id and data_path_barcodes
 	path_raw_barcodes_table = '/lustre/scratch123/pipelines/Pilot_UKB/fetch/wbc_mult_donor/results/raw.Submission_Data_Pilot_UKB.file_paths_10x.tsv'
 
