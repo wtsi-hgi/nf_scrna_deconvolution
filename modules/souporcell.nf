@@ -10,8 +10,7 @@ process souporcell {
     params.souporcell.run
 
     input: 
-    tuple val(samplename), path(bam_file), path(bai_file), path(barcodes_tsv_gz)
-    val(souporcell_n_clusters)
+    tuple val(samplename), path(bam_file), path(bai_file), path(barcodes_tsv_gz), val(souporcell_n_clusters)
     file(reference_fasta)
     
     output:

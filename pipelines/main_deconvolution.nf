@@ -9,6 +9,8 @@ include { souporcell } from '../modules/souporcell.nf'
 // modules to run Vireo with genotype input:
 include { subset_genotype } from '../modules/subset_genotype.nf'
 include { vireo_with_genotype } from '../modules/vireo_with_genotype.nf'
+// if souporcell and vireo were both run, compare cell assigments with venn diagram
+include { plot_souporcell_vs_vireo } from '../modules/plot_souporcell_vs_vireo.nf'
 
 
 workflow  main_deconvolution {
@@ -22,9 +24,25 @@ workflow  main_deconvolution {
     main:
     log.info "running workflow main_deconvolution() ..."
 
-    souporcell(ch_experiment_bam_bai_barcodes, // tuple val(samplename), path(bam_file), path(bai_file), path(barcodes_tsv_gz)
-	       Channel.from(params.souporcell.n_clusters).collect(), // val(souporcell_n_clusters)
-	       Channel.fromPath(params.souporcell.reference_fasta).collect()) // file(reference_fastq)
+    if (params.souporcell.run && params.souporcell.use_raw_barcodes) {
+	// read raw cellranger barcodes per pool for souporcell
+	channel.fromPath(params.souporcell.path_raw_barcodes_table)
+            .splitCsv(header: true, sep: params.input_tables_column_delimiter)
+	    .map{row->tuple(row.experiment_id, row.data_path_barcodes.replaceFirst(/${params.replace_in_path_from}/, params.replace_in_path_to))}
+	    .set{ch_experiment_rawbarcodes}
+	ch_experiment_bam_bai_barcodes
+	    .map {a,b,c,d -> tuple(a,b,c)}
+	    .combine(ch_experiment_rawbarcodes, by: 0)
+	    .combine(ch_experiment_npooled, by: 0)
+	    .set {ch_ch_experiment_bam_bai_barcodes_npooled}
+    } else if (params.souporcell.run && ! params.souporcell.use_raw_barcodes) {
+	ch_experiment_bam_bai_barcodes
+	    .combine(ch_experiment_npooled, by: 0)
+	    .set{ch_experiment_bam_bai_barcodes_npooled}
+    }
+    souporcell(
+	ch_experiment_bam_bai_barcodes_npooled,
+	Channel.fromPath(params.souporcell.reference_fasta).collect()) // file(reference_fastq)
 
     // cellsnp() from pipeline provided inputs:
     cellsnp(ch_experiment_bam_bai_barcodes,
@@ -114,7 +132,17 @@ workflow  main_deconvolution {
 
     plot_donor_ncells(ch_vireo_donor_n_cells_tsv)
 
-
+    
+    if (params.souporcell && params.vireo.run) {
+	log.info "both souporcell and vireo were run."
+	log.info "making plot to compare souporcell vs vireo cell deconvolution assignments."
+	plot_souporcell_vs_vireo(
+	    vireo_out_sample_donor_ids // tuple val(samplename), file("${samplename}/donor_ids.tsv")
+		// combine with tuple val(samplename), file("${samplename}/clusters.tsv"):
+		.combine(souporcell.out.souporcell_output_files.map {a,b,c,d -> tuple(a,b)},
+			 by: 0))
+    } 
+    
     //emit:
     //vireo.out.sample_summary_tsv
 }
