@@ -24,18 +24,24 @@ workflow  main_deconvolution {
     main:
     log.info "running workflow main_deconvolution() ..."
 
-    if (params.souporcell.run) {
+    if (params.souporcell.run && params.souporcell.use_raw_barcodes) {
 	// read raw cellranger barcodes per pool for souporcell
 	channel.fromPath(params.souporcell.path_raw_barcodes_table)
             .splitCsv(header: true, sep: params.input_tables_column_delimiter)
 	    .map{row->tuple(row.experiment_id, row.data_path_barcodes.replaceFirst(/${params.replace_in_path_from}/, params.replace_in_path_to))}
 	    .set{ch_experiment_rawbarcodes}
+	ch_experiment_bam_bai_barcodes
+	    .map {a,b,c,d -> tuple(a,b,c)}
+	    .combine(ch_experiment_rawbarcodes, by: 0)
+	    .combine(ch_experiment_npooled, by: 0)
+	    .set {ch_ch_experiment_bam_bai_barcodes_npooled}
+    } else if (params.souporcell.run && ! params.souporcell.use_raw_barcodes) {
+	ch_experiment_bam_bai_barcodes
+	    .combine(ch_experiment_npooled, by: 0)
+	    .set{ch_experiment_bam_bai_barcodes_npooled}
     }
     souporcell(
-	ch_experiment_bam_bai_barcodes
-	  // if run on raw barcodes .map {a,b,c,d -> tuple(a,b,c)}
-	  // if run on raw barcodes  .combine(ch_experiment_rawbarcodes, by: 0)
-	    .combine(ch_experiment_npooled, by: 0), // tuple val(samplename), path(bam_file), path(bai_file), path(barcodes_tsv_gz)
+	ch_experiment_bam_bai_barcodes_npooled,
 	Channel.fromPath(params.souporcell.reference_fasta).collect()) // file(reference_fastq)
 
     // cellsnp() from pipeline provided inputs:
