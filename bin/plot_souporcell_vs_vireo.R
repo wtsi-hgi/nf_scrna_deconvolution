@@ -46,7 +46,7 @@ p = ggplot(data=df, aes(x=assign_souporcell, y=nn, fill=assign_souporcell)) +
   scale_fill_brewer(palette="Paired") +
   facet_wrap(~assign_vireo, ncol = 3, scales = 'fixed') +
   theme(axis.text.x = element_text(angle = 90)) + 
-  labs(x = 'Souporcell cell assignements (x-axis) vs Vireo (facets)', y = "number of assigned cells (barcodes)",
+  labs(x = 'deconvolution cell assignements: Souporcell (x-axis) vs Vireo (facets)', y = "number of assigned cells (barcodes)",
        fill = "Souporcell\ncell assignements",
        title=" Souporcell vs Vireo cell cluster assignements")
 
