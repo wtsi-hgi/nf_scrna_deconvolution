@@ -1,14 +1,19 @@
 process celltypist {
     tag "${sample}"
 
-    publishDir "${params.outdir}/celltypist/${sample}/", mode: "${params.split_h5ad_per_donor.copy_mode}", overwrite: true,
+    publishDir "${params.outdir}/celltypist/${sample}/", mode: "${params.celltypist.copy_mode}", overwrite: true,
 	saveAs: {filename -> filename.replaceFirst("outputs/","") }
     
     when: 
     params.celltypist.run
 
     input: 
-    tuple val(sample), path(donor_ids_tsv), path(filtered_matrix_h5)
+    tuple val(sample), path(filtered_matrix_h5)
+      // sample is an ID for cellranger run
+      // filtered_matrix_h5 is cellranger output - filtered_feature_bc_matrix.h5)
+    val(celltypist_models)
+      //   comma separated list of celltypist default models to use:
+      //     e.g. 'Immune_All_High.pkla,Immune_All_Low.pkl,Immune_Blood_High.pkla,Immune_Blood_Low.pkl'
 
     output: 
     tuple val(sample), path("outputs/vireo_annot.${sample}.h5ad"), emit: sample_vireo_annot_h5ad
