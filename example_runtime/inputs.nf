@@ -89,7 +89,6 @@ params {
 	min_maf = "0.1" // cellSNP --minMAF
 	min_count = "60" // cellSNP --minCOUNT
 	p = "20" // cellSNP -p
-	
     }
     
     vireo {
