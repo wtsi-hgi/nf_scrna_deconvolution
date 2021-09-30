@@ -72,11 +72,12 @@ params {
 	//   from default available models from 'models.download_models(force_update = True)'
 	//   cf. https://github.com/Teichlab/celltypist 
 	//   comma separated list of celltypist default models to use:
-	models = 'Immune_All_High.pkla,Immune_All_Low.pkl,Immune_Blood_High.pkla,Immune_Blood_Low.pkl'
+	models = ['Immune_All_High.pkl','Immune_All_Low.pkl',
+		  'Immune_Blood_High.pkl','Immune_Blood_Low.pkl']
     }
 
     cellsnp {
-	run = true // whether to run 'cellsnp' task
+	run = false // whether to run 'cellsnp' task
 	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
 	copy_mode = "rellink" // choose "rellink", "symlink", "move" or "copy".
 	// Make sure copy_mode is either "copy" or "move" when remove_workdir = true
@@ -93,7 +94,7 @@ params {
     
     vireo {
 	// choose either run=true or run_with_genotype_input=true (to run Vireo without or with genotype input VCF). 
-	run = true // whether to run 'vireo' task
+	run = false // whether to run 'vireo' task
 	run_with_genotype_input = false // set to true or false. If true, will need the 'genotype_input' inputs below.
 
 	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
@@ -114,7 +115,7 @@ params {
     }
 
     plot_donor_ncells {
-	run = true // whether to run 'plot_donor_ncells' task (multi-pages pdf for all samples Vireo deconvolutions)
+	run = false // whether to run 'plot_donor_ncells' task (multi-pages pdf for all samples Vireo deconvolutions)
 	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
 	copy_mode = "rellink" // choose "rellink", "symlink", "move" or "copy".
 	// Make sure copy_mode is either "copy" or "move" when remove_workdir = true
@@ -123,7 +124,7 @@ params {
     }
     
     split_h5ad_per_donor {
-	run = true // whether to run 'split_h5ad_donor' task 
+	run = false // whether to run 'split_h5ad_donor' task 
 	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
 	copy_mode = "rellink" // choose "rellink", "symlink", "move" or "copy".
 	// Make sure copy_mode is either "copy" or "move" when remove_workdir = true
@@ -150,7 +151,7 @@ params {
     }
 
     souporcell {
-	run = true // whether to run 'souporcell' task
+	run = false // whether to run 'souporcell' task
 
 	// run souporcell on raw or filtered barcodes:
 	use_raw_barcodes = false
@@ -171,7 +172,7 @@ params {
     plot_souporcell_vs_vireo {
 	// if both souporcell and vireo are set to run,
 	//   then a Venn diagram can be made to compare cell assignements (to deconvoluted donor/cluster, doublet or unassigned)
-	run = true // whether to run 'venn_diagram_souporcell_vs_vireo' task
+	run = false // whether to run 'venn_diagram_souporcell_vs_vireo' task
 	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
 	copy_mode = "rellink" // choose "rellink", "symlink", "move" or "copy".
     }
