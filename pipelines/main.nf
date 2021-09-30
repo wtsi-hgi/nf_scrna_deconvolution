@@ -11,6 +11,9 @@ include { prepare_inputs } from './prepare_inputs.nf'
 // main deconvolution pipeline once inputs channels are prepared:
 include { main_deconvolution } from './main_deconvolution.nf'  
 
+// celltypist module, independent from deconvolution tasks
+include { celltypist } from '../modules/celltypist.nf'
+
 workflow {
 
     log.info "inputs parameters are: $params"
@@ -29,6 +32,20 @@ workflow {
 		       prepare_inputs.out.ch_experiment_npooled,
 		       prepare_inputs.out.ch_experiment_filth5,
 		       prepare_inputs.out.ch_experiment_donorsvcf_donorslist)
+
+    if (params.celltypist.run) {
+	// read filtered barcodes straight from cellranger outputs
+	channel.fromPath(params.celltypist.path_filtered_h5)
+            .splitCsv(header: true, sep: params.input_tables_column_delimiter)
+	    .map{row->tuple(row.experiment_id, row.data_path_filt_h5d.replaceFirst(/${params.replace_in_path_from}/, params.replace_in_path_to))}
+	    .set{ch_experiment_filth5}
+
+	channel.fromList(params.celltypist.models)
+	    .set{ch_celltypist_models}
+	
+	ch_experiment_filth5.combine(ch_celltypist_models).view()
+	// celltypist(ch_experiment_filth5, ch_celltypist_models)
+    }
     
 }
 
