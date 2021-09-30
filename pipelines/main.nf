@@ -40,6 +40,7 @@ workflow {
 	    .map{row->tuple(row.experiment_id, row.data_path_filt_h5d.replaceFirst(/${params.replace_in_path_from}/, params.replace_in_path_to))}
 	    .set{ch_experiment_filth5}
 
+	// to finish implementing
 	channel.fromList(params.celltypist.models)
 	    .set{ch_celltypist_models}
 	
