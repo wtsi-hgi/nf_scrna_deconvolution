@@ -2,7 +2,7 @@ process celltypist {
     tag "${sample}"
 
     publishDir "${params.outdir}/celltypist/${model}/${sample}/", mode: "${params.celltypist.copy_mode}", overwrite: true,
-	saveAs: {filename -> filename.replaceFirst("outputs/","").replaceFirst("figres/","") }
+	saveAs: {filename -> filename.replaceFirst("outputs/","").replaceFirst("figures/","") }
     
     when: 
     params.celltypist.run
