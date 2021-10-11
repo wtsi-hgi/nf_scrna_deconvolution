@@ -52,7 +52,7 @@ workflow {
 	channel.fromList(params.celltypist.models)
 	    .set{ch_celltypist_models}
 
-	ch_experiment_filth5.combine(ch_celltypist_models).view()
+	// ch_experiment_filth5.combine(ch_celltypist_models).view()
 	celltypist(ch_experiment_filth5.combine(ch_celltypist_models))
     }
     
