@@ -15,8 +15,11 @@ process celltypist {
       //     e.g. Immune_All_High.pkl
 
     output: 
-    tuple val(sample), path("outputs/${sample}_celltypist.csv"), emit: sample_celltypist_csv
-    tuple val(sample), path("figures/umap_${sample}_celltypist.pdf"), emit: sample_umap_pdf
+    tuple val(sample), path("outputs/${sample}_predicted_labels.csv"), emit: sample_predicted_labels_csv
+    tuple val(sample), path("outputs/${sample}_probability_matrix.csv"), emit: sample_probability_matrix_csv
+    tuple val(sample), path("outputs/${sample}_decision_matrix.csv"), emit: sample_decision_matrix_csv
+    tuple val(sample), path("outputs/${sample}_*.pdf"), emit: sample_plots_pdf
+    tuple val(sample), path("outputs/plot_prob/${sample}_*.pdf"), emit: sample_plots_prob_pdf
     
     script:
     model="${celltypist_model}".replaceFirst(".pkl","")
