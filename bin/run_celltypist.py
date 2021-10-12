@@ -25,7 +25,8 @@ import pandas as pd
 import scanpy as sc
 import celltypist
 from celltypist import models
-
+from pathlib import Path
+    
 # CLI arguments:
 @click.command()
 
@@ -114,31 +115,33 @@ def run_celltypist(samplename, filtered_matrix_h5, celltypist_model,
     logging.info(predictions.predicted_labels)
 
     # Export the three results to csv tables.
-    logging.info("... predictions.to_table")
-    predictions.to_table(folder = output_dir, prefix = samplename)
+    logging.info("... predictions.to_table in folder " + output_dir)
+    predictions.to_table(folder = output_dir, prefix = samplename + '_')
+    ###predictions.to_table(folder = os.getcwd())
     logging.info("... predictions.to_plots")
     # Visualise the predicted cell types overlaid onto the UMAP.
-    predictions.to_plots(folder = output_dir, prefix = samplename)
+    predictions.to_plots(folder = output_dir, prefix = samplename + '_')
+    ###predictions.to_plots(folder = os.getcwd())
     # Visualise the decision scores and probabilities of each cell type overlaid onto the UMAP as well.
-    predictions.to_plots(folder = output_dir, prefix = samplename + '_prob_', plot_probability = True)
+    folder_plot_probs = output_dir + '/plot_prob'
+    if not os.path.exists(folder_plot_probs):
+        os.makedirs(folder_plot_probs)
+    predictions.to_plots(folder = folder_plot_probs, prefix = samplename + '_prob_', plot_probability = True)
 
     # Get an `AnnData` with predicted labels embedded into the cell metadata columns.
-    logging.info("... running predictions.to_adata()")
-    adata = predictions.to_adata()
+    # logging.info("... running predictions.to_adata()")
+    # adata = predictions.to_adata()
     # the new adata has additional prediction information in adata.obs (predicted_labels, over_clustering, and majority_voting).
-    logging.info("... adata.obs:")
-    logging.info(adata.obs)
+    # logging.info("... adata.obs:")
+    # logging.info(adata.obs)
 
-    logging.info("... running sc.tl.umap(adata):")
-    sc.tl.umap(adata)
-    sc.pl.umap(adata, color = ['predicted_labels', 'majority_voting'],
-               save= '_' + samplename + '_celltypist.pdf', legend_loc = 'on data')
+    # logging.info("... running sc.tl.umap(adata):")
+    # sc.tl.umap(adata)
+    # sc.pl.umap(adata, color = ['predicted_labels', 'majority_voting'],
+    #           save= '_' + samplename + '_celltypist.pdf', legend_loc = 'on data')
 
-    logging.info("... write adata.obs to " + output_dir + "/" + samplename + "_celltypist.csv")
-    adata.obs.to_csv(output_dir + "/" + samplename + "_celltypist.csv", index_label='cell_barcode')
-    #adata.write_csvs(dirname = output_dir,
-    #                 skip_data = True # Skip the data matrix X.
-    #                 )
+    # logging.info("... write adata.obs to " + output_dir + "/" + samplename + "_celltypist.csv")
+    # adata.obs.to_csv(output_dir + "/" + samplename + "_celltypist.csv", index_label='cell_barcode')
     logging.info("... script run_celltypist() done.")
     
 if __name__ == '__main__':
