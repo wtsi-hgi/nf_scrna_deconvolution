@@ -57,6 +57,25 @@ params {
 
     // Next, set other inputs and parameters specfic to each pipeline task:
 
+    celltypist { // cf. https://github.com/Teichlab/celltypist 
+	run = true // whether to run 'celltypist' task
+
+	// run celltypist on filtered barcodes straight from cellranger outputs:
+	//   must have columns 'experiment_id' (ID of cellranger run) and 'data_path_filt_h5d' (absolute path to cellranger filtered filtered_feature_bc_matrix.h5)
+	path_filtered_h5 = '/lustre/scratch123/pipelines/Pilot_UKB/fetch/wbc_mult_donor/results/Submission_Data_Pilot_UKB.file_paths_10x.tsv'
+
+	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
+	copy_mode = "rellink" // choose "rellink", "symlink", "move" or "copy".
+	// Make sure copy_mode is either "copy" or "move" when remove_workdir = true
+
+	// specify models to use,
+	//   from default available models from 'models.download_models(force_update = True)'
+	//   cf. https://github.com/Teichlab/celltypist 
+	//   comma separated list of celltypist default models to use:
+	models = ['Immune_All_High.pkl','Immune_All_Low.pkl',
+		  'Immune_Blood_High.pkl','Immune_Blood_Low.pkl']
+    }
+
     cellsnp {
 	run = true // whether to run 'cellsnp' task
 	remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
@@ -71,7 +90,6 @@ params {
 	min_maf = "0.1" // cellSNP --minMAF
 	min_count = "60" // cellSNP --minCOUNT
 	p = "20" // cellSNP -p
-	
     }
     
     vireo {
