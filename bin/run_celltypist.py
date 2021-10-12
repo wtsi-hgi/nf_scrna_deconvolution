@@ -117,11 +117,10 @@ def run_celltypist(samplename, filtered_matrix_h5, celltypist_model,
     logging.info("... predictions.to_table")
     predictions.to_table(folder = output_dir, prefix = samplename)
     logging.info("... predictions.to_plots")
-    predictions.to_plots(folder = output_dir, prefix = samplename)
     # Visualise the predicted cell types overlaid onto the UMAP.
     predictions.to_plots(folder = output_dir, prefix = samplename)
     # Visualise the decision scores and probabilities of each cell type overlaid onto the UMAP as well.
-    predictions.to_plots(folder = output_dir, prefix = samplename, plot_probability = True)
+    predictions.to_plots(folder = output_dir, prefix = samplename + '_prob_', plot_probability = True)
 
     # Get an `AnnData` with predicted labels embedded into the cell metadata columns.
     logging.info("... running predictions.to_adata()")
