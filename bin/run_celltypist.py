@@ -116,7 +116,6 @@ def run_celltypist(samplename, filtered_matrix_h5, celltypist_model,
     # Export the three results to csv tables.
     logging.info("... predictions.to_table")
     predictions.to_table(folder = output_dir, prefix = samplename)
-    # Visualise the predicted cell types overlaid onto the UMAP.
     logging.info("... predictions.to_plots")
     predictions.to_plots(folder = output_dir, prefix = samplename)
     # Visualise the predicted cell types overlaid onto the UMAP.
