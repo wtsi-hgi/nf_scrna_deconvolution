@@ -41,19 +41,19 @@ workflow {
     if (params.celltypist.run) {
 	// read filtered barcodes straight from cellranger outputs
 
-	log.info "params.celltypist.path_filtered_h5: ${params.celltypist.path_filtered_h5}"
+		log.info "params.celltypist.path_filtered_h5: ${params.celltypist.path_filtered_h5}"
 
-	channel.fromPath(params.celltypist.path_filtered_h5)
-            .splitCsv(header: true, sep: params.input_tables_column_delimiter)
-	    .map{row->tuple(row.experiment_id, row.data_path_filt_h5.replaceFirst(/${params.replace_in_path_from}/, params.replace_in_path_to))}
-	    .set{ch_experiment_filth5}
+		channel.fromPath(params.celltypist.path_filtered_h5)
+				.splitCsv(header: true, sep: params.input_tables_column_delimiter)
+			.map{row->tuple(row.experiment_id, row.data_path_filt_h5.replaceFirst(/${params.replace_in_path_from}/, params.replace_in_path_to))}
+			.set{ch_experiment_filth5}
 
-	// to finish implementing
-	channel.fromList(params.celltypist.models)
-	    .set{ch_celltypist_models}
+		// to finish implementing
+		channel.fromList(params.celltypist.models)
+			.set{ch_celltypist_models}
 
-	// ch_experiment_filth5.combine(ch_celltypist_models).view()
-	celltypist(ch_experiment_filth5.combine(ch_celltypist_models))
+		// ch_experiment_filth5.combine(ch_celltypist_models).view()
+		celltypist(ch_experiment_filth5.combine(ch_celltypist_models))
     }
     
 }
