@@ -2,40 +2,40 @@ process souporcell {
     // cf. https://github.com/wheaton5/souporcell
     tag "${samplename}"
     publishDir "${params.outdir}/souporcell/",
-	mode: "${params.souporcell.copy_mode}",
-	pattern: "${samplename}",
-	overwrite: true
+    mode: "${params.souporcell.copy_mode}",
+    pattern: "${samplename}",
+    overwrite: true
     
     when: 
-    params.souporcell.run
+      params.souporcell.run
 
     input: 
-    tuple val(samplename), path(bam_file), path(bai_file), path(barcodes_tsv_gz), val(souporcell_n_clusters)
-    file(reference_fasta)
+      tuple val(samplename), path(bam_file), path(bai_file), path(barcodes_tsv_gz), val(souporcell_n_clusters)
+      file(reference_fasta)
     
     output:
-    tuple val(samplename), file("${samplename}"), emit: souporcell_output_dir
-    tuple val(samplename), file("${samplename}/clusters.tsv"), file("${samplename}/cluster_genotypes.vcf"), file("${samplename}/ambient_rna.txt"), emit: souporcell_output_files
+      tuple val(samplename), file("${samplename}"), emit: souporcell_output_dir
+      tuple val(samplename), file("${samplename}/clusters.tsv"), file("${samplename}/cluster_genotypes.vcf"), file("${samplename}/ambient_rna.txt"), emit: souporcell_output_files
 
     script:
     """
-umask 2 # make files group_writable
+      umask 2 # make files group_writable
 
-if [[ ${barcodes_tsv_gz} =~ \\.gz\$ ]]; then
-  echo \"${barcodes_tsv_gz} is gzipped\"
-  zcat ${barcodes_tsv_gz} > bar_codes.txt
-else
-  echo \"${barcodes_tsv_gz} is not gzipped\"
-  ln -s ${barcodes_tsv_gz} bar_codes.txt
-fi
+      if [[ ${barcodes_tsv_gz} =~ \\.gz\$ ]]; then
+        echo \"${barcodes_tsv_gz} is gzipped\"
+        zcat ${barcodes_tsv_gz} > bar_codes.txt
+      else
+        echo \"${barcodes_tsv_gz} is not gzipped\"
+        ln -s ${barcodes_tsv_gz} bar_codes.txt
+      fi
 
-souporcell_pipeline.py \\
-  -i ${bam_file} \\
-  -b bar_codes.txt \\
-  -f ${reference_fasta} \\
-  -t ${task.cpus} \\
-  -o ${samplename} \\
-  -k ${souporcell_n_clusters}
+      souporcell_pipeline.py \\
+        -i ${bam_file} \\
+        -b bar_codes.txt \\
+        -f ${reference_fasta} \\
+        -t ${task.cpus} \\
+        -o ${samplename} \\
+        -k ${souporcell_n_clusters}
     """
 }
 

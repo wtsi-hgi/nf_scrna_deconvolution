@@ -190,7 +190,7 @@ params {
     
     plot_souporcell_vs_vireo {
         // if both souporcell and vireo are set to run,
-        //   then a Venn diagram can be made to compare cell assignements (to deconvoluted donor/cluster, doublet or unassigned)
+        // then a Venn diagram can be made to compare cell assignements (to deconvoluted donor/cluster, doublet or unassigned)
         run = false // whether to run 'venn_diagram_souporcell_vs_vireo' task
         remove_workdir = false // // whether to remove all work dirs of this task when workflow{} is finished. 
         copy_mode = "rellink" // choose "rellink", "symlink", "move" or "copy".

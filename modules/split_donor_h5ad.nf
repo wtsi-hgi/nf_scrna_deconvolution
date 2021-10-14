@@ -40,7 +40,7 @@ process split_donor_h5ad {
 
         # sample h5ad filepath to tsv:
         printf \"$sample\\t\$(find outputs -maxdepth 1 -name '*.h5ad')\" > ${sample}.h5ad.tsv
-
+    
 
         sed -i s\"/outputs/${params.split_h5ad_per_donor.absolute_results_path}\\/split_donor_h5ad\\/${sample}/\"g ${sample}.h5ad.tsv 
 
@@ -48,14 +48,11 @@ process split_donor_h5ad {
         find outputs/donor_level_anndata -maxdepth 1 -name '*.h5ad' -type f -printf \"%f\\n\" | sort | cut -f1 -d'.' > donors.list
         find outputs/donor_level_anndata -maxdepth 1 -name '*.h5ad' | sort > donors.h5ad.list
         paste donors.list donors.h5ad.list > ${sample}.donors.h5ad.tsv
-
         # paste sample and donor columns 1 and 2 with __
         sed s\"/^/${sample}__/\"g ${sample}.donors.h5ad.tsv > ${sample}__donors.h5ad.tsv
         sed -i s\"/outputs/${params.split_h5ad_per_donor.absolute_results_path}\\/split_donor_h5ad\\/${sample}/\"g ${sample}__donors.h5ad.tsv
-
         sed -i s\"/^/$sample\\t/\"g ${sample}.donors.h5ad.tsv 
         sed -i s\"/outputs/${params.split_h5ad_per_donor.absolute_results_path}\\/split_donor_h5ad\\/${sample}/\"g ${sample}.donors.h5ad.tsv
-
         rm donors.list
         rm donors.h5ad.list
 

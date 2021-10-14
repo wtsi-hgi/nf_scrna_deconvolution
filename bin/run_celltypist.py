@@ -26,7 +26,13 @@ import scanpy as sc
 import celltypist
 from celltypist import models
 from pathlib import Path
-    
+import shutil
+
+total, used, free = shutil.disk_usage("/tmp")
+
+logging.info("Total: %d GiB" % (total // (2**30)))
+logging.info("Used: %d GiB" % (used // (2**30)))
+logging.info("Free: %d GiB" % (free // (2**30)))
 # CLI arguments:
 @click.command()
 
@@ -47,8 +53,13 @@ from pathlib import Path
               type=click.IntRange(1, 9, clamp=True), show_default=True,
               help='Gzip compression level for scanpy write of AnnData hdf5 objects. Integer in range 1 to 9')
 
+@click.option('-g','--input_h5_genome_version', default="GRCh38", show_default=True, type=str,
+              help='True or False: whether to write donor level scanpy hdf5 objects to dir --output_dir')
+
+
+
 def run_celltypist(samplename, filtered_matrix_h5, celltypist_model,
-                   output_dir, anndata_compression_level):
+                   output_dir, anndata_compression_level,input_h5_genome_version):
     """process cellranger output filtered h5 so that it can be fed to Celltypist"""
     logging.info('running run_celltypist() function..')
 
@@ -60,11 +71,30 @@ def run_celltypist(samplename, filtered_matrix_h5, celltypist_model,
     random.seed(seed_value)
     # 2. Set `numpy` pseudo-random generator at a fixed value
     np.random.seed(seed_value)
-
-    logging.info('sc.read_10x_h5() on file path: ' + str(filtered_matrix_h5))
-    adata = sc.read_10x_h5(filtered_matrix_h5)
+    fixed_h5 = 'fixed_genome.h5'
+    try:
+        adata = sc.read_10x_h5(filtered_matrix_h5)
+    except:
+        import tables
+        logging.info('fixing orig_h5')
+        orig_h5 = filtered_matrix_h5
+        fixed_h5 = 'fixed_genome.h5'
+        tables.copy_file(orig_h5, fixed_h5, overwrite = True)
+        with tables.open_file(fixed_h5, "r+") as f:
+            n = f.get_node("/matrix/features")
+            n_genes = f.get_node("/matrix/shape")[0]
+            if "genome" not in n:
+                f.create_array(n, "genome", np.repeat(input_h5_genome_version, n_genes))
+        # read-in cellranger 10x data produced by 'cellranger count':
+        logging.info('fixed orig_h5 into fixed_h5')
+        adata = sc.read_10x_h5(fixed_h5) #, genome='background_removed')
+        
+    try:
+        os.remove(fixed_h5)
+        logging.info('removed fixed h5 file for memory saving - should really fix it in the cellbender pipeline')
+    except:
+        logging.info('no file to remove')
     logging.info('loadin sc.read_10x_h5() done.')
-
     logging.info(adata.var)
     logging.info(adata.obsm)
     logging.info("n cells len(adata.obs): " + str(len(adata.obs)))
@@ -93,6 +123,7 @@ def run_celltypist(samplename, filtered_matrix_h5, celltypist_model,
     # https://www.celltypist.org/tutorials
     # https://colab.research.google.com/github/Teichlab/celltypist/blob/main/notebook/celltypist_tutorial.ipynb#scrollTo=ultimate-pilot
     # Enabling `force_update = True` will overwrite existing (old) models.
+    logging.info(os.getcwd())
     models.download_models(force_update = True)
     
     # Indeed, the `model` argument defaults to `Immune_All_Low.pkl`.
@@ -105,12 +136,15 @@ def run_celltypist(samplename, filtered_matrix_h5, celltypist_model,
     # Alternatively, just specify the model name (recommended as this ensures the model is intact every time it is loaded).
     logging.info("... running celltypist.annotate(adata, model = model, majority_voting = True)")
     predictions = celltypist.annotate(adata, model = model, majority_voting = True)
+    
     # By default (majority_voting = False), CellTypist will infer the identity of
     # each query cell independently. This leads to raw predicted cell type labels,
     # and usually finishes within seconds or minutes depending on the size of the query data.
     # You can also turn on the majority-voting classifier (majority_voting = True),
     # which refines cell identities within local subclusters after an over-clustering approach
     # at the cost of increased runtime.
+
+
     logging.info("... predictions.predicted_labels:")
     logging.info(predictions.predicted_labels)
 
@@ -119,6 +153,8 @@ def run_celltypist(samplename, filtered_matrix_h5, celltypist_model,
     predictions.to_table(folder = output_dir, prefix = samplename + '_')
     ###predictions.to_table(folder = os.getcwd())
     logging.info("... predictions.to_plots")
+
+
     # Visualise the predicted cell types overlaid onto the UMAP.
     predictions.to_plots(folder = output_dir, prefix = samplename + '_')
     ###predictions.to_plots(folder = os.getcwd())
