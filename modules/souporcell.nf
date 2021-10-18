@@ -10,8 +10,9 @@ process souporcell {
       params.souporcell.run
 
     input: 
-      tuple val(samplename), path(bam_file), path(bai_file), path(barcodes_tsv_gz), val(souporcell_n_clusters)
+      tuple val(samplename), path(bam_file), path(bai_file), path(barcodes_tsv_gz), val(souporcell_n_clusters), path(genotypes)
       file(reference_fasta)
+      
     
     output:
       tuple val(samplename), file("${samplename}"), emit: souporcell_output_dir
@@ -35,7 +36,8 @@ process souporcell {
         -f ${reference_fasta} \\
         -t ${task.cpus} \\
         -o ${samplename} \\
-        -k ${souporcell_n_clusters}
+        -k ${souporcell_n_clusters} \\
+        --known_genotypes ${genotypes}
     """
 }
 
